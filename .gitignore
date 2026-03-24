@@ -1,0 +1,4 @@
+train/
+test/
+output/
+__pycache__/
