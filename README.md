@@ -1,4 +1,4 @@
-# Chest X-Ray Phobia Classification
+# Medical-Image-Classification-PyTorch
 
 A binary image classification pipeline for detecting **phobia** (vs. normal) from chest X-ray images using a fine-tuned ResNet-50 in PyTorch.
 
