@@ -2,3 +2,5 @@ train/
 test/
 output/
 __pycache__/
+pneumonia.zip
+*.zip
