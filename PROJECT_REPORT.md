@@ -1,34 +1,17 @@
-# Medical Image Classification: Master Report
-**Generated:** 2026-03-25 11:38
+# Medical Image Classification: 5-Fold CV Report
+**Status:** Full Re-run Complete
 
-## 1. Test Inferences
-Predictions for the unlabelled test data have been generated and mapped to their respective filenames.
-- **Output File:** `submissions/final_submission.csv`
+## Parameter Impact (Fixed)
+The visualization below replaces the raw layer indices with descriptive component names.
+![Impact](data/visualizations/parameter_impact.png)
 
-## 2. Model Evaluation (Cross-Validation)
-### Area Under Curve (AUC)
-![AUC Curve](data/visualizations/auc_curve.png)
-*(Detailed rates saved in `data/tables/auc_table.csv`)*
+## Model Performance
+![AUC](data/visualizations/auc_curve.png)
 
-### Training Loss
-![Loss Curve](data/visualizations/loss_curve.png)
-
-**Loss Data:**
-|   Epoch |     Loss |
-|--------:|---------:|
-|       1 | 0.316313 |
-|       2 | 0.175815 |
-|       3 | 0.164164 |
-|       4 | 0.131746 |
-
-## 3. Parameter Impact (Feature Importance)
-For Convolutional Neural Networks, standard tabular features do not exist. Instead, we measure the **Mean Absolute Weight** of the network layers to determine which computational stages are making the heaviest impact on the final decision.
-
-![Parameter Impact](data/visualizations/parameter_impact.png)
-
-**Impact Data:**
-| Layer    |   Mean Abs Weight |
-|:---------|------------------:|
-| 0.weight |         0.0972503 |
-| 3.weight |         0.0463317 |
-| 7.weight |         0.0162956 |
+### Impact Data Table
+| Feature/Layer                 |   Impact Score |
+|:------------------------------|---------------:|
+| Initial Features (Conv1)      |      0.100333  |
+| Final Classifier (Dense2)     |      0.0590203 |
+| Mid-Level Patterns (Conv2)    |      0.0531388 |
+| Complex Associations (Dense1) |      0.0157678 |

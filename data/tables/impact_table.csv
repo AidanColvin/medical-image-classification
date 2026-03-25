@@ -1,0 +1,5 @@
+Feature/Layer,Impact Score
+Initial Features (Conv1),0.10033317655324936
+Final Classifier (Dense2),0.059020303189754486
+Mid-Level Patterns (Conv2),0.053138814866542816
+Complex Associations (Dense1),0.01576775126159191
