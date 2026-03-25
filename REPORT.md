@@ -1,18 +1,18 @@
-# 🔬 Medical Image Classification Report
+# Medical Image Classification Report
 
-## 📊 Performance Metrics
+## Performance Metrics
 | Metric | Result |
 | :--- | :--- |
-| Accuracy | **99.90%** |
+| Accuracy | **99.83%** |
 | AUC | **1.00** |
 | Test Images Processed | **0** |
 
-## 🖼️ Visualizations
+## Visualizations
 ### Confusion Matrix
-![Confusion Matrix](data/visualizations/confusion_matrix.png)
+![CM](data/visualizations/confusion_matrix.png)
 
 ### ROC Curve
-![ROC Curve](data/visualizations/roc_curve.png)
+![ROC](data/visualizations/roc_curve.png)
 
 ### Training Metrics
-![Metrics Curve](data/visualizations/metrics_curve.png)
+![Metrics](data/visualizations/metrics_curve.png)
