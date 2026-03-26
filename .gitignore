@@ -1,6 +1,6 @@
-train/
-test/
-output/
 __pycache__/
+.pytest_cache/
+*.pth
+.DS_Store
+data/raw/
 pneumonia.zip
-*.zip

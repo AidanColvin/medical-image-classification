@@ -14,9 +14,8 @@ def ensemble_csvs(file_pattern, output_path=None):
     ensemble_df['label'] = sum(df['label'] for df in dfs) / len(dfs)
     ensemble_df['label'] = (ensemble_df['label'] >= 0.5).astype(int)
     
-    # Use provided path (for tests) or auto-versioned path (for production)
     final_path = output_path if output_path else get_versioned_path("submission.csv")
-    ensemble_df.to_csv(final_path, index=False)
+    ensemble_df[['id', 'label']].to_csv(final_path, index=False)
     print(f"Success: Saved to {final_path}")
 
 if __name__ == "__main__":
