@@ -1,25 +1,40 @@
 import pandas as pd
 import glob
+import os
 
-def ensemble_csvs(file_pattern, output_file='ensembled_submission.csv'):
-    files = glob.glob(file_pattern)
+def get_next_versioned_filename(base_name="submission", ext="csv"):
+    """Returns the next available versioned filename."""
+    # Check if the base file exists
+    first_file = f"{base_name}.{ext}"
+    if not os.path.exists(first_file):
+        return first_file
+    
+    # Check for versioned files
+    i = 2
+    while os.path.exists(f"{base_name}_v{i}.{ext}"):
+        i += 1
+    return f"{base_name}_v{i}.{ext}"
+
+def ensemble_csvs(file_pattern):
+    files = sorted(glob.glob(file_pattern))
     if not files:
-        print("No files found matching pattern.")
+        print(f"No files found matching pattern: {file_pattern}")
         return
 
-    # Load all submission dataframes
+    print(f"Ensembling {len(files)} files...")
     dfs = [pd.read_csv(f) for f in files]
     
-    # Average the raw probabilities
     ensemble_df = dfs[0].copy()
+    # Average the probabilities across all folds
     ensemble_df['label'] = sum(df['label'] for df in dfs) / len(dfs)
     
-    # Apply standard threshold (or update to use optimized threshold)
+    # Binary classification threshold
     ensemble_df['label'] = (ensemble_df['label'] >= 0.5).astype(int)
     
-    ensemble_df.to_csv(output_file, index=False)
-    print(f"Ensemble saved to {output_file}")
+    output_path = get_next_versioned_filename()
+    ensemble_df.to_csv(output_path, index=False)
+    print(f"Success: New submission saved as {output_path}")
 
 if __name__ == "__main__":
-    # Ensure your fold predictions are saved as probabilities, not hard integers, before ensembling
+    # Aggregates all fold-specific CSVs
     ensemble_csvs('submission_fold_*.csv')

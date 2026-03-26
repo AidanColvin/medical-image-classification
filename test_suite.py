@@ -117,3 +117,45 @@ def test_random_seed_consistency():
     torch.manual_seed(42)
     val2 = torch.randn(1)
     assert torch.equal(val1, val2)
+
+def test_versioning_logic(tmp_path):
+    import os
+    from ensemble_submissions import get_next_versioned_filename
+    
+    # Change directory to tmp_path for the test
+    original_cwd = os.getcwd()
+    os.chdir(tmp_path)
+    
+    try:
+        # Create base file
+        open("submission.csv", "w").close()
+        v2 = get_next_versioned_filename()
+        assert v2 == "submission_v2.csv"
+        
+        # Create v2 file
+        open("submission_v2.csv", "w").close()
+        v3 = get_next_versioned_filename()
+        assert v3 == "submission_v3.csv"
+    finally:
+        os.chdir(original_cwd)
+
+def test_versioning_logic(tmp_path):
+    import os
+    from ensemble_submissions import get_next_versioned_filename
+    
+    # Change directory to tmp_path for the test
+    original_cwd = os.getcwd()
+    os.chdir(tmp_path)
+    
+    try:
+        # Create base file
+        open("submission.csv", "w").close()
+        v2 = get_next_versioned_filename()
+        assert v2 == "submission_v2.csv"
+        
+        # Create v2 file
+        open("submission_v2.csv", "w").close()
+        v3 = get_next_versioned_filename()
+        assert v3 == "submission_v3.csv"
+    finally:
+        os.chdir(original_cwd)
