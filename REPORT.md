@@ -3,7 +3,7 @@
 ## Performance Summary
 | Metric | Result |
 | :--- | :--- |
-| Accuracy | **98.91%** |
+| Accuracy | **99.43%** |
 | AUC | **1.00** |
 | Test Images Processed | **624** |
 
@@ -24,5 +24,5 @@
 |    0 |       1 |
 |    1 |       1 |
 |    2 |       1 |
-|    3 |       1 |
+|    3 |       0 |
 |    4 |       0 |
