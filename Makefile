@@ -1,9 +1,6 @@
 export PYTHONPATH := $(shell pwd)
 
-.PHONY: test run submit clean
-
-test:
-	pytest tests/ -W ignore::RuntimeWarning
+.PHONY: run submit clean
 
 run:
 	python3 main.py
@@ -13,4 +10,4 @@ submit:
 
 clean:
 	find . -type d -name "__pycache__" -exec rm -rf {} +
-	rm -rf .pytest_cache
+	rm -rf data/submissions/*
