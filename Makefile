@@ -1,13 +1,12 @@
-.PHONY: test run clean
-
-run:
-	python3 main.py
-	python3 src/visualize.py
-	python3 src/create_report.py
-	@echo "Pipeline complete. Check REPORT.md."
-
 test:
-	pytest .
+	pytest test_suite.py -W ignore::RuntimeWarning
+
+run: test
+	python3 main.py
+
+ensemble:
+	python3 ensemble_submissions.py
 
 clean:
-	rm -f *.png *.csv REPORT.md
+	rm -rf __pycache__ .pytest_cache
+	rm -f submission_fold_*.csv

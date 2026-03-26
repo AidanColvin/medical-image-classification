@@ -9,7 +9,7 @@ def find_optimal_threshold(y_true, y_prob):
 
     for thresh in thresholds:
         y_pred = (y_prob >= thresh).astype(int)
-        score = f1_score(y_true, y_pred)
+        score = f1_score(y_true, y_pred, zero_division=0)
         if score > best_score:
             best_score = score
             best_threshold = thresh
