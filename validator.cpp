@@ -20,7 +20,8 @@ int main(int argc, char* argv[]) {
     int count = 0;
     std::getline(file, line); // Header
     while (std::getline(file, line)) { if(!line.empty()) count++; }
-    std::cout << "\n[SYSTEM] Validation Report for: " << argv[1] << std::endl;
+    
+    std::cout << "\n[SYSTEM] Validation Report: " << argv[1] << std::endl;
     if (count == 624) {
         std::cout << "[SUCCESS] Integrity verified (624 rows)." << std::endl;
         return 0;
