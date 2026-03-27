@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pneumonia Detection Engine</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 min-h-screen font-sans text-slate-900">
+    <main class="max-w-3xl mx-auto py-16 px-6">
+        <header class="mb-10 text-center">
+            <h1 class="text-4xl font-black tracking-tight text-slate-900">Medical Image Classifier</h1>
+            <p class="text-slate-500 mt-2">Upload a chest X-ray. Powered by PyTorch & ResNet18.</p>
+        </header>
+
+        <div id="dropzone" class="border-2 border-dashed border-blue-300 rounded-2xl p-12 text-center bg-white hover:bg-blue-50 transition-colors cursor-pointer mb-8 shadow-sm">
+            <input type="file" id="fileInput" class="hidden" accept="image/*">
+            <div class="text-blue-600 font-bold text-lg">Click to Upload X-Ray</div>
+            <p class="text-sm text-slate-400 mt-2">PNG, JPG, JPEG</p>
+        </div>
+
+        <div id="resultCard" class="hidden bg-white rounded-2xl p-8 shadow-md border border-slate-200 text-center animate-pulse">
+            <h2 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Diagnosis</h2>
+            <div id="diagnosisText" class="text-5xl font-black mb-2">-</div>
+            <div id="confidenceText" class="text-slate-500 font-mono">-</div>
+        </div>
+    </main>
+
+    <script>
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('fileInput');
+        const resultCard = document.getElementById('resultCard');
+        const diagnosisText = document.getElementById('diagnosisText');
+        const confidenceText = document.getElementById('confidenceText');
+
+        dropzone.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // UI Loading State
+            resultCard.classList.remove('hidden');
+            diagnosisText.textContent = "Analyzing...";
+            diagnosisText.className = "text-3xl font-bold text-slate-400 mb-2 animate-pulse";
+            confidenceText.textContent = "Running tensor operations...";
+
+            // Prepare Data
+            const formData = new FormData();
+            formData.append("file", file);
+
+            try {
+                // Send to FastAPI Backend
+                const response = await fetch("http://localhost:8000/predict", {
+                    method: "POST",
+                    body: formData
+                });
+                const data = await response.json();
+
+                // Update UI with Results
+                resultCard.classList.remove('animate-pulse');
+                diagnosisText.textContent = data.diagnosis;
+                diagnosisText.className = data.diagnosis === "PNEUMONIA" 
+                    ? "text-5xl font-black mb-2 text-red-600" 
+                    : "text-5xl font-black mb-2 text-emerald-500";
+                confidenceText.textContent = `Confidence: ${data.confidence}`;
+
+            } catch (error) {
+                diagnosisText.textContent = "Connection Error";
+                diagnosisText.className = "text-3xl font-bold text-red-500 mb-2";
+                confidenceText.textContent = "Ensure FastAPI server is running on port 8000.";
+            }
+        });
+    </script>
+</body>
+</html>
