@@ -6,7 +6,7 @@ test:
 
 run:
 	@echo "[SYSTEM] Starting Full Training and Prediction Pipeline..."
-	python3 src/train_and_predict.py
+	python3 train_and_predict.py
 
 clean:
 	@echo "[SYSTEM] Cleaning up logs and cache..."
