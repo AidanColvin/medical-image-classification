@@ -43,3 +43,10 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+import pandas as pd
+if os.path.exists('data/submissions/submission.csv'):
+    sub = pd.read_csv('data/submissions/submission.csv')
+    sub['id'] = range(len(sub))
+    sub[['id', 'label']].to_csv('submission.csv', index=False)
+    print('Formatted submission.csv saved.')
