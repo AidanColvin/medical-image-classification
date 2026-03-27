@@ -1,6 +1,9 @@
-numpy
-pandas
-Pillow
 torch
 torchvision
-scikit-learn
+pandas
+pillow
+fastapi
+uvicorn
+python-multipart
+tqdm
+pytest
