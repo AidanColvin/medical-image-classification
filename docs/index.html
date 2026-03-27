@@ -3,72 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pneumonia Detection Engine</title>
+    <title>Medical-Image-Classification-PyTorch</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-50 min-h-screen font-sans text-slate-900">
-    <main class="max-w-3xl mx-auto py-16 px-6">
-        <header class="mb-10 text-center">
-            <h1 class="text-4xl font-black tracking-tight text-slate-900">Medical Image Classifier</h1>
-            <p class="text-slate-500 mt-2">Upload a chest X-ray. Powered by PyTorch & ResNet18.</p>
-        </header>
+<body class="bg-slate-50 min-h-screen flex flex-col items-center justify-center font-sans text-slate-900 p-6">
+    
+    <main class="max-w-xl w-full bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+        
+        <h1 class="text-2xl font-black text-center mb-8 text-slate-800 tracking-tight">Medical-Image-Classification-PyTorch</h1>
 
-        <div id="dropzone" class="border-2 border-dashed border-blue-300 rounded-2xl p-12 text-center bg-white hover:bg-blue-50 transition-colors cursor-pointer mb-8 shadow-sm">
+        <div id="interactionBox" class="relative border-2 border-dashed border-blue-400 rounded-xl h-64 flex flex-col items-center justify-center text-center bg-blue-50/50 hover:bg-blue-50 cursor-pointer transition-all mb-6">
             <input type="file" id="fileInput" class="hidden" accept="image/*">
-            <div class="text-blue-600 font-bold text-lg">Click to Upload X-Ray</div>
-            <p class="text-sm text-slate-400 mt-2">PNG, JPG, JPEG</p>
+            
+            <div id="boxContent" class="pointer-events-none p-4">
+                <svg class="w-10 h-10 text-blue-500 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                <p class="text-lg font-bold text-blue-700" id="boxTitle">Drag & Drop X-Ray Here</p>
+                <p class="text-sm text-blue-500/80 mt-1" id="boxSubtitle">or click to browse</p>
+            </div>
         </div>
 
-        <div id="resultCard" class="hidden bg-white rounded-2xl p-8 shadow-md border border-slate-200 text-center animate-pulse">
-            <h2 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Diagnosis</h2>
-            <div id="diagnosisText" class="text-5xl font-black mb-2">-</div>
-            <div id="confidenceText" class="text-slate-500 font-mono">-</div>
-        </div>
+        <button id="runBtn" class="w-full py-4 bg-slate-900 text-white rounded-xl font-bold text-lg hover:bg-blue-600 transition-colors shadow-md disabled:bg-slate-300 disabled:cursor-not-allowed">
+            Run
+        </button>
+
+        <p class="mt-8 text-xs text-slate-400 text-center leading-relaxed">
+            <strong>Disclaimer:</strong> This tool should not be used for medical diagnostics or health decisions. The project objective was to train a model on a large dataset of X-ray images to distinguish between healthy lungs and those exhibiting pneumonia.
+        </p>
+
     </main>
 
     <script>
-        const dropzone = document.getElementById('dropzone');
+        const interactionBox = document.getElementById('interactionBox');
         const fileInput = document.getElementById('fileInput');
-        const resultCard = document.getElementById('resultCard');
-        const diagnosisText = document.getElementById('diagnosisText');
-        const confidenceText = document.getElementById('confidenceText');
+        const boxContent = document.getElementById('boxContent');
+        const boxTitle = document.getElementById('boxTitle');
+        const boxSubtitle = document.getElementById('boxSubtitle');
+        const runBtn = document.getElementById('runBtn');
 
-        dropzone.addEventListener('click', () => fileInput.click());
+        let selectedFile = null;
 
-        fileInput.addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
+        // Box interactions
+        interactionBox.addEventListener('click', () => fileInput.click());
 
-            // UI Loading State
-            resultCard.classList.remove('hidden');
-            diagnosisText.textContent = "Analyzing...";
-            diagnosisText.className = "text-3xl font-bold text-slate-400 mb-2 animate-pulse";
-            confidenceText.textContent = "Running tensor operations...";
+        interactionBox.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            interactionBox.classList.add('border-blue-600', 'bg-blue-100');
+        });
+        
+        interactionBox.addEventListener('dragleave', () => {
+            interactionBox.classList.remove('border-blue-600', 'bg-blue-100');
+        });
+        
+        interactionBox.addEventListener('drop', (e) => {
+            e.preventDefault();
+            interactionBox.classList.remove('border-blue-600', 'bg-blue-100');
+            if (e.dataTransfer.files.length) handleFileSelect(e.dataTransfer.files[0]);
+        });
 
-            // Prepare Data
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) handleFileSelect(e.target.files[0]);
+        });
+
+        function handleFileSelect(file) {
+            selectedFile = file;
+            boxTitle.textContent = "Image Loaded: " + file.name;
+            boxTitle.className = "text-lg font-bold text-emerald-700";
+            boxSubtitle.textContent = "Ready to run.";
+            interactionBox.className = "relative border-2 border-solid border-emerald-400 rounded-xl h-64 flex flex-col items-center justify-center text-center bg-emerald-50 cursor-pointer transition-all mb-6";
+        }
+
+        // Run Inference
+        runBtn.addEventListener('click', async () => {
+            if (!selectedFile) {
+                alert("Please drop or select an image first.");
+                return;
+            }
+
+            // Set Loading State
+            runBtn.disabled = true;
+            runBtn.textContent = "Analyzing...";
+            boxTitle.textContent = "Running Inference...";
+            boxTitle.className = "text-lg font-bold text-slate-600 animate-pulse";
+            boxSubtitle.textContent = "Processing tensor through ResNet18";
+            interactionBox.className = "relative border-2 border-dashed border-slate-300 rounded-xl h-64 flex flex-col items-center justify-center text-center bg-slate-50 mb-6";
+
             const formData = new FormData();
-            formData.append("file", file);
+            formData.append("file", selectedFile);
 
             try {
-                // Send to FastAPI Backend
-                const response = await fetch("http://localhost:8000/predict", {
+                // Connect to local Python Backend
+                const response = await fetch("http://127.0.0.1:8000/predict", {
                     method: "POST",
                     body: formData
                 });
+                
+                if (!response.ok) throw new Error("Backend error");
                 const data = await response.json();
 
-                // Update UI with Results
-                resultCard.classList.remove('animate-pulse');
-                diagnosisText.textContent = data.diagnosis;
-                diagnosisText.className = data.diagnosis === "PNEUMONIA" 
-                    ? "text-5xl font-black mb-2 text-red-600" 
-                    : "text-5xl font-black mb-2 text-emerald-500";
-                confidenceText.textContent = `Confidence: ${data.confidence}`;
+                // Swap the box content out for the Prediction Result
+                const isPneumonia = data.diagnosis === "PNEUMONIA";
+                const color = isPneumonia ? "red" : "emerald";
+                
+                interactionBox.className = `relative border-2 border-solid border-${color}-400 rounded-xl h-64 flex flex-col items-center justify-center text-center bg-${color}-50 mb-6 cursor-pointer`;
+                
+                boxContent.innerHTML = `
+                    <h2 class="text-xs font-bold text-${color}-600 uppercase tracking-widest mb-1">Prediction</h2>
+                    <div class="text-4xl font-black text-${color}-600 mb-2">${data.diagnosis}</div>
+                    <div class="text-sm font-mono text-slate-700 font-bold">Accuracy Probability: ${data.confidence}</div>
+                    <div class="text-xs text-slate-400 mt-4">(Click anywhere to test a new image)</div>
+                `;
 
             } catch (error) {
-                diagnosisText.textContent = "Connection Error";
-                diagnosisText.className = "text-3xl font-bold text-red-500 mb-2";
-                confidenceText.textContent = "Ensure FastAPI server is running on port 8000.";
+                // Handle Backend Offline
+                interactionBox.className = "relative border-2 border-solid border-amber-400 rounded-xl h-64 flex flex-col items-center justify-center text-center bg-amber-50 mb-6 cursor-pointer";
+                boxContent.innerHTML = `
+                    <div class="text-xl font-bold text-amber-600 mb-2">Connection Error</div>
+                    <div class="text-sm text-slate-600">Could not reach the Python backend.</div>
+                    <div class="text-xs text-slate-400 mt-4">(Ensure 'uvicorn api:app' is running in your terminal)</div>
+                `;
+            } finally {
+                runBtn.disabled = false;
+                runBtn.textContent = "Run";
             }
         });
     </script>
