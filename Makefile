@@ -1,13 +1,14 @@
-export PYTHONPATH := $(shell pwd)
+.PHONY: test run clean
 
-.PHONY: run submit clean
+test:
+	@echo "[SYSTEM] Running 25-Test Verification Suite..."
+	python3 -m pytest tests/test_comprehensive.py -v | tee test_results.log
 
 run:
-	python3 main.py
-
-submit:
-	python3 src/generate_submission.py
+	@echo "[SYSTEM] Starting Full Training and Prediction Pipeline..."
+	python3 src/train_and_predict.py
 
 clean:
+	@echo "[SYSTEM] Cleaning up logs and cache..."
+	rm -f test_results.log
 	find . -type d -name "__pycache__" -exec rm -rf {} +
-	rm -rf data/submissions/*
